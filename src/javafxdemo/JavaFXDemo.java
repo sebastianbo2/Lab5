@@ -29,6 +29,22 @@ public class JavaFXDemo extends Application {
         launch(args);
     }
     
+    public void calcTotals(GridPane container, int totalExpenses, int totalAllowable, int excessOrSaved) {
+        Label totalExpensesTitle = new Label("Total expenses:");
+        container.add(totalExpensesTitle, 0, 0);
+        Label totalExpensesAmount = new Label("" + totalExpenses);
+        container.add(totalExpensesAmount, 1, 0);
+        
+        Label totalAllowableTitle = new Label("Total allowable:");
+        container.add(totalAllowableTitle, 0, 1);
+        Label totalAllowableAmount = new Label("" + totalAllowable);
+        container.add(totalAllowableAmount, 1, 1);
+        
+        Label differenceTitle = new Label((excessOrSaved >= 0) ? "Amount saved:": "Excess to pay:");
+        container.add(differenceTitle, 0, 2);
+        Label differenceAmount = new Label((excessOrSaved >= 0) ? "" + excessOrSaved:"" + (excessOrSaved * -1));
+    }
+    
     @Override
     public void start(Stage stage) {
         stage.setTitle("Travel Expense Calculator");
@@ -123,32 +139,13 @@ public class JavaFXDemo extends Application {
         
         grid.setHgap(15);
         
-        GridPane totals = new GridPane();
-        totals.setVgap(20);
+        GridPane finalData = new GridPane();
+        finalData.setId("final-data-container");
+        BorderPane finalDataContainer = new BorderPane(finalData);
         
-        ArrayList<Label> receiptPrices = new ArrayList<Label>();
-        ArrayList<Label> receiptSaved = new ArrayList<Label>();
-        ArrayList<Label> receiptTotals = new ArrayList<Label>();
-
-        for (int i = 1; i < labels.length + 1; i++) {
-            Label expenseTitle = new Label(labels[i - 1].getText());
-            totals.add(expenseTitle, 0, i);
-
-            Label price = new Label();
-            receiptPrices.add(price);
-            totals.add(price, 3, i);
-
-            Label saved = new Label();
-            receiptSaved.add(saved);
-            totals.add(saved, 4, i);
-
-            Label total = new Label();
-            receiptTotals.add(total);
-            totals.add(total, 5, i);
-        }
-
-        Label subtotalLabel = new Label("Total Amount");
-        totals.add(subtotalLabel, 0, 9);
+        finalDataContainer.prefWidth(600);
+        finalDataContainer.setPadding(new Insets(150));
+        finalData.setStyle("-fx-border-color: black; -fx-border-size: 1px; -fx-border-style: solid;");
         
         Button button = new Button("Calculate Total");
         button.setAlignment(Pos.CENTER);
@@ -156,12 +153,16 @@ public class JavaFXDemo extends Application {
         BorderPane buttonContainer = new BorderPane(button);
         
         button.setOnAction((ActionEvent e) -> {
-            int daysAmount = Integer.parseInt(tripDaysField.getText());
+            try {
+                int daysAmount = Integer.parseInt(tripDaysField.getText());
+            } catch (Exception err) {
+                System.err.println("Error: " + err.getMessage());
+            }
             
-            
+            calcTotals(finalData, 0, 0, 0);
         });
         
-        VBox root = new VBox(grid, buttonContainer, totals);
+        VBox root = new VBox(grid, buttonContainer, finalDataContainer);
         root.setSpacing(15);
         root.setPadding(new Insets(10));
         

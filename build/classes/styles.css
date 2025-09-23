@@ -9,10 +9,6 @@
     -fx-pref-width: 100px;
 }
 
-.button {
-    
-}
-
-.button:hover {
-
+#final-data-container .label {
+    -fx-font-size: 15px;
 }
