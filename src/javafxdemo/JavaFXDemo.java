@@ -4,7 +4,6 @@
  */
 package javafxdemo;
 
-import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -15,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -43,6 +43,7 @@ public class JavaFXDemo extends Application {
         Label differenceTitle = new Label((excessOrSaved >= 0) ? "Amount saved:": "Excess to pay:");
         container.add(differenceTitle, 0, 2);
         Label differenceAmount = new Label((excessOrSaved >= 0) ? "" + excessOrSaved:"" + (excessOrSaved * -1));
+        container.add(differenceAmount, 1, 2);
     }
     
     @Override
@@ -112,6 +113,7 @@ public class JavaFXDemo extends Application {
         };
         
         GridPane grid = new GridPane();
+        grid.setVgap(10);
         
         grid.add(tripDaysLabel, 0, 0);
         grid.add(tripDaysField, 1, 0);
@@ -141,18 +143,22 @@ public class JavaFXDemo extends Application {
         
         GridPane finalData = new GridPane();
         finalData.setId("final-data-container");
+        finalData.setHgap(100);
+        finalData.setVgap(15);
         BorderPane finalDataContainer = new BorderPane(finalData);
         
         finalDataContainer.prefWidth(600);
         finalDataContainer.setPadding(new Insets(150));
-        finalData.setStyle("-fx-border-color: black; -fx-border-size: 1px; -fx-border-style: solid;");
+//        finalData.setStyle("-fx-border-color: black; -fx-border-size: 1px; -fx-border-style: solid;");
+
+        Button calcButton = new Button("Calculate Total");
         
-        Button button = new Button("Calculate Total");
-        button.setAlignment(Pos.CENTER);
+        Button clearButton = new Button("Reset");
         
-        BorderPane buttonContainer = new BorderPane(button);
+        HBox buttonsContainer = new HBox(calcButton, clearButton);
+        buttonsContainer.setAlignment(Pos.CENTER);
         
-        button.setOnAction((ActionEvent e) -> {
+        calcButton.setOnAction((ActionEvent e) -> {
             try {
                 int daysAmount = Integer.parseInt(tripDaysField.getText());
             } catch (Exception err) {
@@ -160,9 +166,23 @@ public class JavaFXDemo extends Application {
             }
             
             calcTotals(finalData, 0, 0, 0);
+            finalData.setVisible(true);
         });
         
-        VBox root = new VBox(grid, buttonContainer, finalDataContainer);
+        clearButton.setOnAction((ActionEvent e) -> {
+            tripDaysField.setText("");
+            airfareField.setText("");
+            carRentalFeesField.setText("");
+            milesDrivenField.setText("");
+            parkingFeesField.setText("");
+            taxiChargesField.setText("");
+            seminarFeesField.setText("");
+            lodgingChargesField.setText("");
+            
+            finalData.setVisible(false);
+        });
+        
+        VBox root = new VBox(grid, buttonsContainer, finalDataContainer);
         root.setSpacing(15);
         root.setPadding(new Insets(10));
         
