@@ -16,7 +16,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -29,21 +28,24 @@ public class JavaFXDemo extends Application {
         launch(args);
     }
     
-    public void calcTotals(GridPane container, int totalExpenses, int totalAllowable, int excessOrSaved) {
-        Label totalExpensesTitle = new Label("Total expenses:");
-        container.add(totalExpensesTitle, 0, 0);
-        Label totalExpensesAmount = new Label("" + totalExpenses);
-        container.add(totalExpensesAmount, 1, 0);
+    Label totalExpensesTitle;
+    Label totalExpensesAmount;
+    Label totalAllowableTitle;
+    Label totalAllowableAmount;
+    Label differenceTitle;
+    Label differenceAmount;
+    
+    public void calcTotals(GridPane container, double totalExpenses, double totalAllowable, double excessOrSaved) {
+        excessOrSaved = Math.round(excessOrSaved * 100) / 100;
         
-        Label totalAllowableTitle = new Label("Total allowable:");
-        container.add(totalAllowableTitle, 0, 1);
-        Label totalAllowableAmount = new Label("" + totalAllowable);
-        container.add(totalAllowableAmount, 1, 1);
+        totalExpensesAmount.setText(String.format("%.2f", totalExpenses));
         
-        Label differenceTitle = new Label((excessOrSaved >= 0) ? "Amount saved:": "Excess to pay:");
-        container.add(differenceTitle, 0, 2);
-        Label differenceAmount = new Label((excessOrSaved >= 0) ? "" + excessOrSaved:"" + (excessOrSaved * -1));
-        container.add(differenceAmount, 1, 2);
+        totalAllowableAmount.setText(String.format("%.2f", totalAllowable));
+        
+        differenceTitle.setText((excessOrSaved >= 0) ? "Amount saved:": "Excess to pay:");
+        
+        differenceAmount.setText(String.format("%.2f", (excessOrSaved >= 0) ? excessOrSaved:(excessOrSaved * -1)));
+        differenceAmount.setStyle((excessOrSaved >= 0) ? "-fx-text-fill: green;": "-fx-text-fill: red;");
     }
     
     @Override
@@ -92,25 +94,25 @@ public class JavaFXDemo extends Application {
         TextField lodgingChargesField = new TextField();
         lodgingChargesField.setMaxWidth(maxFieldSize);
         
-        Label[] labels = {tripDaysLabel,
-            airfareLabel,
-            carRentalFeesLabel,
-            milesDrivenLabel,
-            parkingFeesLabel,
-            taxiChargesLabel,
-            seminarFeesLabel,
-            lodgingChargesLabel
-        };
-        
-        TextField[] fields = {tripDaysField,
-            airfareField,
-            carRentalFeesField,
-            milesDrivenField,
-            parkingFeesField,
-            taxiChargesField,
-            seminarFeesField,
-            lodgingChargesField
-        };
+//        Label[] labels = {tripDaysLabel,
+//            airfareLabel,
+//            carRentalFeesLabel,
+//            milesDrivenLabel,
+//            parkingFeesLabel,
+//            taxiChargesLabel,
+//            seminarFeesLabel,
+//            lodgingChargesLabel
+//        };
+//        
+//        TextField[] fields = {tripDaysField,
+//            airfareField,
+//            carRentalFeesField,
+//            milesDrivenField,
+//            parkingFeesField,
+//            taxiChargesField,
+//            seminarFeesField,
+//            lodgingChargesField
+//        };
         
         GridPane grid = new GridPane();
         grid.setVgap(10);
@@ -142,6 +144,7 @@ public class JavaFXDemo extends Application {
         grid.setHgap(15);
         
         GridPane finalData = new GridPane();
+        finalData.setVisible(false);
         finalData.setId("final-data-container");
         finalData.setHgap(100);
         finalData.setVgap(15);
@@ -149,23 +152,70 @@ public class JavaFXDemo extends Application {
         
         finalDataContainer.prefWidth(600);
         finalDataContainer.setPadding(new Insets(150));
-//        finalData.setStyle("-fx-border-color: black; -fx-border-size: 1px; -fx-border-style: solid;");
 
         Button calcButton = new Button("Calculate Total");
         
         Button clearButton = new Button("Reset");
         
         HBox buttonsContainer = new HBox(calcButton, clearButton);
+        buttonsContainer.setSpacing(10);
         buttonsContainer.setAlignment(Pos.CENTER);
         
+        totalExpensesTitle = new Label("Total expenses:");
+        finalData.add(totalExpensesTitle, 0, 0);
+        totalExpensesAmount = new Label();
+        finalData.add(totalExpensesAmount, 1, 0);
+
+        totalAllowableTitle = new Label("Total allowable:");
+        finalData.add(totalAllowableTitle, 0, 1);
+        totalAllowableAmount = new Label();
+        finalData.add(totalAllowableAmount, 1, 1);
+
+        differenceTitle = new Label();
+        finalData.add(differenceTitle, 0, 2);
+        differenceAmount = new Label();
+        finalData.add(differenceAmount, 1, 2);
+        
         calcButton.setOnAction((ActionEvent e) -> {
+            double price = 0;
+            double totalAllowable = 0;
+            
+            int daysAmount = 0;
+            
             try {
-                int daysAmount = Integer.parseInt(tripDaysField.getText());
+                daysAmount = !tripDaysField.getText().isEmpty() ? Integer.parseInt(tripDaysField.getText()) : 0;
+                
+                double airfare = !airfareField.getText().isEmpty() ? Double.parseDouble(airfareField.getText()): 0;
+                price += airfare;
+                
+                double carRentalFees = !carRentalFeesField.getText().isEmpty() ? Double.parseDouble(carRentalFeesField.getText()): 0;
+                price += carRentalFees;
+                
+                double milesDriven = !milesDrivenField.getText().isEmpty() ? Double.parseDouble(milesDrivenField.getText()): 0;
+                
+                double parkingFees = !parkingFeesField.getText().isEmpty() ? Double.parseDouble(parkingFeesField.getText()): 0;
+                price += parkingFees;
+                
+                double taxiCharges = !taxiChargesField.getText().isEmpty() ? Double.parseDouble(taxiChargesField.getText()): 0;
+                price += taxiCharges;
+                
+                double seminarFees = !seminarFeesField.getText().isEmpty() ? Double.parseDouble(seminarFeesField.getText()): 0;
+                price += seminarFees;
+                
+                double lodgingCharges = !lodgingChargesField.getText().isEmpty() ? Double.parseDouble(lodgingChargesField.getText()): 0;
+                price += lodgingCharges * daysAmount;
+                
+                totalAllowable += 37 * daysAmount;
+                totalAllowable += Math.min(parkingFees, 10 * daysAmount);
+                totalAllowable += Math.min(taxiCharges, 20 * daysAmount);
+                totalAllowable += Math.min(lodgingCharges, 95 * daysAmount);
+                totalAllowable += 0.27 * milesDriven;
+                
             } catch (Exception err) {
                 System.err.println("Error: " + err.getMessage());
             }
             
-            calcTotals(finalData, 0, 0, 0);
+            calcTotals(finalData, price, totalAllowable, totalAllowable - price);
             finalData.setVisible(true);
         });
         
