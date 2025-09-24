@@ -19,6 +19,8 @@
 }
 
 #final-data-container .label {
-    -fx-max-width: Infinity;
-    -fx-font-size: 18px;
+/*    -fx-border-color: black;
+    -fx-border-style: solid;
+    -fx-border-size: 1px;*/
+    -fx-font-size: 15px;
 }

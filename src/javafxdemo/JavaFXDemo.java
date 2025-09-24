@@ -164,16 +164,19 @@ public class JavaFXDemo extends Application {
         totalExpensesTitle = new Label("Total expenses:");
         finalData.add(totalExpensesTitle, 0, 0);
         totalExpensesAmount = new Label();
+        totalExpensesAmount.setMaxWidth(2000);
         finalData.add(totalExpensesAmount, 1, 0);
 
         totalAllowableTitle = new Label("Total allowable:");
         finalData.add(totalAllowableTitle, 0, 1);
         totalAllowableAmount = new Label();
+        totalAllowableAmount.setMaxWidth(2000);
         finalData.add(totalAllowableAmount, 1, 1);
 
         differenceTitle = new Label();
         finalData.add(differenceTitle, 0, 2);
         differenceAmount = new Label();
+        differenceAmount.setMaxWidth(2000);
         finalData.add(differenceAmount, 1, 2);
         
         calcButton.setOnAction((ActionEvent e) -> {
